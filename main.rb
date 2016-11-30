@@ -8,7 +8,7 @@ out = Hash.new
 
 def invalid?(string)
   invalid = false
-  if string =~ /\d/ or string.strip.empty?
+  if string =~ /\d/ or string.strip.empty? or (!string.scan(/\)/).empty? and string.scan(/\(/).empty?)
     valid = true
   end
   valid
