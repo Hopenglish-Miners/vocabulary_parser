@@ -2,10 +2,6 @@ require 'open-uri'
 require 'pdf-reader'
 require 'json'
 
-io     = open('in/inputfile.pdf')
-reader = PDF::Reader.new(io)
-out = Hash.new
-
 def invalid?(string)
   invalid = false
   if string =~ /\d/ or string.strip.empty? or (!string.scan(/\)/).empty? and string.scan(/\(/).empty?)
@@ -27,6 +23,11 @@ def create_more_words(string)
   [word,word+post]
 end
 
+io     = open('in/inputfile.pdf')
+reader = PDF::Reader.new(io)
+out = Hash.new
+
+# Read PDF and create hash with level and array of words
 reader.pages.each do |page|
   unless page.number == 1
     key = page.text.lines.first.strip
@@ -46,7 +47,13 @@ reader.pages.each do |page|
   end
 end
 
-#puts JSON.pretty_generate(out)
+# Order the words in every levels and add total information
+out.each do |key, value|
+  out[key] = {"total" => value.size , "words" =>  value.sort}
+end
+
+
+# Save into file
 File.open("vocabulary.json","w") do |f|
   f.write(out.to_json)
 end
