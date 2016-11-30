@@ -4,10 +4,19 @@ require 'json'
 
 def invalid?(string)
   invalid = false
-  if string =~ /\d/ or string.strip.empty? or (!string.scan(/\)/).empty? and string.scan(/\(/).empty?)
-    valid = true
+  #Check is is number
+  if string =~ /\d/
+    invalid = true
   end
-  valid
+  if string.strip.empty?
+    invalid = true
+  end
+  #Check if the word has close parenthesis but not open
+  # Example: word)
+  if (!string.scan(/\)/).empty? and string.scan(/\(/).empty?)
+    invalid = true
+  end
+  invalid
 end
 
 # Check if the word include parenthesis
@@ -49,8 +58,10 @@ end
 
 # Order the words in every levels and add total information
 out.each do |key, value|
+  value.reject! {|c| c.empty?} #clean empty words
   out[key] = {"total" => value.size , "words" =>  value.sort}
 end
+
 
 
 # Save into file
